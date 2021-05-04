@@ -2,6 +2,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 from abc import ABC, abstractmethod
+
+from consts import CANVAS_WIDTH
 from utils import distance
 
 class GameElement(ABC):
@@ -93,6 +95,15 @@ class Sprite(GameCanvasElement):
             self.y,
             image=self.photo_image)
 
+    def outofcanvas(self):
+        pass
+
+
+class CommonCases(Sprite):
+
+    def outofcanvas(self):
+        if self.y > CANVAS_WIDTH + 30:
+            self.to_be_deleted = True
 
 class GameApp(ttk.Frame): 
     def __init__(self, parent, canvas_width=800, canvas_height=500, update_delay=33):

@@ -3,70 +3,69 @@ from random import randint, random
 
 import tkinter as tk
 
-from gamelib import Sprite, GameApp, Text
+from gamelib import Sprite, GameApp, Text, CommonCases
 
 from consts import *
 
 class SlowFruit(Sprite):
     def __init__(self, app, x, y):
-        super().__init__(app, 'images/apple.png', x, y)
+        super().__init__(app, 'images/apple.gif', x, y)
 
         self.app = app
+        self.name = 'SlowFruit'
 
     def update(self):
         self.y += FRUIT_SLOW_SPEED
 
-        if self.y > CANVAS_WIDTH + 30:
-            self.to_be_deleted = True
+        super().outofcanvas()
 
 
 class FastFruit(Sprite):
     def __init__(self, app, x, y):
-        super().__init__(app, 'images/banana.png', x, y)
+        super().__init__(app, 'images/banana.gif', x, y)
 
         self.app = app
+        self.name = 'FastFruit'
 
     def update(self):
         self.y += FRUIT_FAST_SPEED
 
-        if self.y > CANVAS_WIDTH + 30:
-            self.to_be_deleted = True
+        super().outofcanvas()
 
 
 class SlideFruit(Sprite):
     def __init__(self, app, x, y):
-        super().__init__(app, 'images/cherry.png', x, y)
+        super().__init__(app, 'images/cherry.gif', x, y)
 
         self.app = app
         self.direction = randint(0,1)*2 - 1
+        self.name = 'SlideFruit'
 
     def update(self):
         self.y += FRUIT_FAST_SPEED
         self.x += self.direction * 5
 
-        if self.y > CANVAS_WIDTH + 30:
-            self.to_be_deleted = True
+        super().outofcanvas()
 
 
 class CurvyFruit(Sprite):
     def __init__(self, app, x, y):
-        super().__init__(app, 'images/pear.png', x, y)
+        super().__init__(app, 'images/pear.gif', x, y)
 
         self.app = app
         self.t = randint(0,360) * 2 * math.pi / 360
+        self.name = 'CurvyFruit'
 
     def update(self):
         self.y += FRUIT_SLOW_SPEED * 1.2
         self.t += 1
         self.x += math.sin(self.t*0.08)*10
 
-        if self.y > CANVAS_WIDTH + 30:
-            self.to_be_deleted = True
-
+        super().outofcanvas()
 
 class Basket(Sprite):
     def __init__(self, app, x, y):
-        super().__init__(app, 'images/basket.png', x, y)
+        super().__init__(app, 'images/basket.gif', x, y)
 
         self.app = app
         self.direction = None
@@ -82,7 +81,14 @@ class Basket(Sprite):
     def check_collision(self, fruit):
         if self.distance_to(fruit) <= BASKET_CATCH_DISTANCE:
             fruit.to_be_deleted = True
-            self.app.score += 1
+            if fruit.name == 'CurvyFruit':
+                self.app.score += 4
+            elif fruit.name == 'SlideFruit':
+                self.app.score += 3
+            elif fruit.name == 'FastFruit':
+                self.app.score += 2
+            else:
+                self.app.score += 1
             self.app.update_score()
 
 
